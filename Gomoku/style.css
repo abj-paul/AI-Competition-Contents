@@ -1,0 +1,83 @@
+.container {
+    background-color: khaki;
+}
+/*
+.reset-button{
+    margin-left: 50%;
+    margin-top: 10px;
+    border-style: ridge;
+    padding: 3rem;
+    transition: background-color 0.3s ease;
+    background-color: khaki;
+    
+}
+.reset-button:hover{
+  background-color: darkkhaki;
+}
+*/
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
+    gap: 2px;
+    border: 1px solid black;
+    height: 600px;
+    width: 700px;
+    margin: auto;
+    margin-top: 5%;
+    padding: 10px;
+}
+
+.grid-item {
+    width: calc((100%/10)-2px);
+    height: calc((100%/10)-2px);
+    background-color: rgb(68, 3, 3);
+    border: 1px solid white;
+    text-align: center;
+}
+
+.modal-header{
+    margin: auto;
+    background-color:khaki;
+    text-align: center;
+}
+.modal-title{
+  font-size: large;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: midnightblue;
+  margin: auto;
+}
+.modal-body {
+  font-size: medium;
+  font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+  color: midnightblue;
+  background-color: blanchedalmond;
+  margin: auto;
+}
+.modal-footer{
+  background-color: beige;
+}
+.piece {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin: auto;
+}
+
+.black {
+  background-color: black;
+}
+
+.white {
+  background-color: white;
+}
+
+.hide {
+  display: none;
+}
+
+.info {
+  margin-top: 50px;
+  margin-bottom: 50px;
+  text-align: center;
+}
