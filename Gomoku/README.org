@@ -1,0 +1,36 @@
+* About
+You can simply edit the variables in the script.js file with your AI server info and use the frontend to see the AIs fight!
+#+begin_src js
+  const PLAYER1_INFO = {
+      "server_address": "http://localhost:3000/ai/solve",
+      "name": "Stanform",
+      "piece": BLACK,
+      "color": "Black",
+      "logo": "./resources/stanform-logo.webp"
+  };
+
+  const PLAYER2_INFO = {
+      "server_address": "http://localhost:3000/ai/solve",
+      "name": "Knights",
+      "piece": WHITE,
+      "color": "White",
+      "logo": "./resources/knight-logo.jpg"
+  };
+#+end_src
+
+* How to create your endpoint?
+All AIs communicate using RESTful protocol. All AIs must have the following endpoint.
+#+begin_src js
+  app.post("/ai/solve", (req, res)=>{
+      let state = req.body.state;
+      let player = req.body.player;
+      game.setPlayerRole(player);
+
+      res.status(200).send({"state":state});
+  });
+#+end_src
+
+Here, ~state~ is the state of the gomoku board after each ply/move. So your endpoint should take a gomoku board, decide its move and return the gomoku board with its move placed.
+
+
+And thats it! You are ready to fight the legendary war of AIs.

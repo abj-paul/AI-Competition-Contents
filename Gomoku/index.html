@@ -17,7 +17,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h4 class="modal-title" id="welcomeModalLabel">Welcome to Gomoku!</h4>
+          <h4 class="modal-title"> AI Gomoku Contest</h4>
         </div>
         <div class="modal-body">
           <p>Welcome to Gomoku! This is a simple and fun game. Click the "Start Playing" button to begin.</p>
@@ -41,34 +41,42 @@
   <!-- Generate the Board -->
   <div class="container">
     <div class="row">
-      <div class="col-sm-1">
+      <div class="col-sm-2">
         <div class="info">
           <p class="moves"> Moves: <span id="moves">0</span></p>
+	  <figure id="player1" class="">
+            <img class="logo" src="./resources/faster.gif" alt="">
+            <figcaption>Default</figcaption>
+          </figure>
+	  
+          <figure id="player2" class="hide">
+            <img class="logo" src="./resources/faster.gif" alt="">
+            <figcaption>Default</figcaption>
+          </figure>
+	  
         </div>
       </div>
       <div class="col-sm-8">
         <div class="board-container">
-          <p>Welcome to Gomoku!</p>
+          <p id="opponentLabel">Welcome to Gomoku!</p>
 
           <div class="grid-container" id="board">
           </div>
         </div>
       </div>
-      <div class="col-sm-3">
-        <figure id="circle" class="">
-          <img src="./resources/cute-in-circle.gif" alt="">
-          <figcaption>Gomoku is funn~</figcaption>
-        </figure>
+      <div class="col-sm-2">
+	<table id="moveTable">
+          <thead>
+            <tr>
+                <th>Move</th>
+                <th>Player</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be dynamically added here -->
+        </tbody>
+    </table>
 
-        <figure id="faster">
-          <img src="./resources/faster.gif" alt="">
-          <figcaption>Faster human!</figcaption>
-        </figure>
-
-        <figure id="aiisdeciding" class="hide">
-          <img src="./resources/ai-is-deciding.gif" alt="">
-          <figcaption>AI is deciding....</figcaption>
-        </figure>
       </div>
     </div>
   </div>
