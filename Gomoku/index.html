@@ -30,7 +30,7 @@
         </div>
         <div class="modal-footer">
           <!-- Start Playing" button -->
-          <button type="button" class="btn btn-primary" id="startPlayingButton" data-dismiss="modal">Start
+          <button type="button" onclick="gamePlay()" class="btn btn-primary" id="startPlayingButton" data-dismiss="modal">Start
             Playing</button>
         </div>
       </div>
@@ -102,8 +102,6 @@
       document.getElementById('startPlayingButton').addEventListener('click', function () {
          generateBoard();
         });
-
-        gamePlay();
   </script>
 
 </body>

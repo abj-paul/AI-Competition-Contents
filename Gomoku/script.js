@@ -87,7 +87,7 @@ async function wait_for_opponent_move(callback, server_address, player) {
       console.log(`Player ${player} has replied!`);
       current_board_state = reply.state;
 	generateBoard();
-	if(GAME_END_SIGNAL==false) GAME_END_SIGNAL = handlePostMoveOf(player);
+	handlePostMoveOf(player);
       callback(); 
     })
     .catch((error) => {
@@ -100,15 +100,13 @@ function handlePostMoveOf(player){
     totalMoves+=1;
 
     if (checkWin() == true) {
+	GAME_END_SIGNAL = true;
 	showResultModal(`${player} won!`);
-	return true;
     }
     if(totalMoves==100){
+	GAME_END_SIGNAL = true;
 	console.log("Over 100 moves, ending..");
-	return true;
     }
-    
-  return false;
 }
 
 
