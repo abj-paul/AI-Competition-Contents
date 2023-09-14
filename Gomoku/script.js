@@ -37,13 +37,11 @@ function generateBoard() {
   // Drawing New Board
   for (let i = 0; i < BOARD_SIZE; i++) {
     for (let j = 0; j < BOARD_SIZE; j++) {
-      let cell = document.createElement("button");
+      let cell = document.createElement("div");
       cell.innerText = " ";
       cell.id = `${i}-${j}`;
       cell.classList.add("grid-item");
-      cell.onclick = function (event) {
-        makeMove(i, j);
-      };
+
       document.getElementById("board").appendChild(cell);
       drawMove(i, j);
     }
@@ -65,9 +63,8 @@ function wait_for_opponent_move(callback, server_address) {
     .then((reply) => {
       console.log("AI has replied!");
       current_board_state = reply.state;
+      console.log(reply.state);
       generateBoard();
-      document.getElementById("aiisdeciding").setAttribute("class", "hide");
-      document.getElementById("faster").removeAttribute("class", "hide");
       callback(); // Call the callback function
     })
     .catch((error) => {
@@ -75,59 +72,46 @@ function wait_for_opponent_move(callback, server_address) {
     });
 }
 
-
-function makeMove(i, j) {
-
-  wait_for_opponent_move(() => {
-    if (checkWin() == true) {
-      showResultModal("You won!");
-      return;
-    }
-    
-    document.getElementById("faster").setAttribute("class","hide");
-    document.getElementById("aiisdeciding").removeAttribute("class", "hide");
-
-
-    if (CURRENT_TURN == BLACK) {
-      CURRENT_TURN = WHITE;
-    } else {
-      CURRENT_TURN = BLACK;
-    }
-
-    if (checkWin() == true) {
-      showResultModal("AI won!");
-      return;
-    }
-    
-  }, GOMOKU_PLAYER1_ADDRESS);
-
+function handlePostMoveOf(player){
   totalMoves+=1;
 
-  wait_for_opponent_move(() => {
-    if (checkWin() == true) {
-      showResultModal("You won!");
-      return;
-    }
-    
-    document.getElementById("faster").setAttribute("class","hide");
-    document.getElementById("aiisdeciding").removeAttribute("class", "hide");
+  if (CURRENT_TURN == BLACK) {
+    CURRENT_TURN = WHITE;
+  } else {
+    CURRENT_TURN = BLACK;
+  }
+  if (checkWin() == true) {
+    showResultModal(`${player} won!`);
+    return true;
+  }
+
+  if(totalMoves==100) return true;
+
+  return false;
+}
 
 
-    if (CURRENT_TURN == BLACK) {
-      CURRENT_TURN = WHITE;
-    } else {
-      CURRENT_TURN = BLACK;
-    }
+function gamePlay() {
+  console.log("The game has started");
 
-    if (checkWin() == true) {
-      showResultModal("AI won!");
-      return;
-    }
-    
-  }, GOMOKU_PLAYER2_ADDRESS);
+  while(1){
+	  console.log(`Current Move = ${totalMoves}`);
+    wait_for_opponent_move(() => {
+      document.getElementById("faster").setAttribute("class","hide");
+      document.getElementById("aiisdeciding").removeAttribute("class", "hide");
+    }, GOMOKU_PLAYER1_ADDRESS);
 
-  totalMoves+=1;
+    if(handlePostMoveOf(GOMOKU_PLAYER1_ADDRESS)) break;
 
+
+    wait_for_opponent_move(() => {
+      document.getElementById("faster").removeAttribute("class","hide");
+      document.getElementById("aiisdeciding").setAttribute("class", "hide");
+      
+    }, GOMOKU_PLAYER2_ADDRESS);
+
+    if(handlePostMoveOf(GOMOKU_PLAYER2_ADDRESS)) break;
+  }
 }
 
 
