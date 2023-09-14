@@ -6,9 +6,17 @@ const BOARD_SIZE = 10;
 
 let totalMoves = 1;
 
-const GOMOKU_PLAYER1_ADDRESS = "http://localhost:3000/ai/solve";
-const GOMOKU_PLAYER2_ADDRESS = "http://localhost:3000/ai/solve";
+const PLAYER1_INFO = {
+    "server_address": "http://localhost:3000/ai/solve",
+    "name": "DOMINATOR",
+    "piece": BLACK
+};
 
+const PLAYER2_INFO = {
+    "server_address": "http://localhost:3000/ai/solve",
+    "name": "Uwu Player",
+    "piece": WHITE
+};
 
 const INITIAL_STATE = [
   ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -25,7 +33,6 @@ const INITIAL_STATE = [
 
 
 let current_board_state = INITIAL_STATE;
-
 let GAME_END_SIGNAL = false;
 
 function generateBoard() {
@@ -62,9 +69,9 @@ async function gamePlay() {
 	      document.getElementById("faster").removeAttribute("class","hide");
 	      document.getElementById("aiisdeciding").setAttribute("class", "hide");
 	      
-	  }, GOMOKU_PLAYER2_ADDRESS, WHITE);
+	  }, PLAYER2_INFO.server_address, PLAYER2_INFO);
 	  
-      }, GOMOKU_PLAYER1_ADDRESS, BLACK);
+      }, PLAYER1_INFO.server_address, PLAYER1_INFO);
 
 	await sleep(10000);
 
@@ -72,22 +79,22 @@ async function gamePlay() {
 }
 
 async function wait_for_opponent_move(callback, server_address, player) {
-  fetch(GOMOKU_PLAYER1_ADDRESS, {
+  fetch(server_address, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
 	state: current_board_state,
-	player: player
+	player: player.piece
     }),
   })
     .then((response) => response.json())
     .then((reply) => {
-      console.log(`Player ${player} has replied!`);
+      console.log(`Player ${player.name} has replied!`);
       current_board_state = reply.state;
 	generateBoard();
-	if(!GAME_END_SIGNAL) handlePostMoveOf(player);
+	if(!GAME_END_SIGNAL) handlePostMoveOf(player.name);
       callback(); 
     })
     .catch((error) => {
@@ -95,9 +102,11 @@ async function wait_for_opponent_move(callback, server_address, player) {
     });
 }
 
+// Check if the player has won after each move
 function handlePostMoveOf(player){
     console.log(`Moves so far = ${totalMoves}`);
     totalMoves+=1;
+    document.getElementById("moves").innerText = ` ${totalMoves} `;
 
     if (checkWin() == true) {
 	GAME_END_SIGNAL = true;
@@ -115,38 +124,10 @@ function handlePostMoveOf(player){
 
 
 // Miscellaneous Functions
-
-async function waitForPlayerMove(callback,playerAddress, playerColor) {
-  console.log(`Waiting for ${playerColor} player's move...`);
-  
-  return new Promise((resolve) => {
-    wait_for_opponent_move(callback, playerAddress, playerColor);
-  });
-}
-
 function sleep(ms) {
     console.log(`Sleeping for ${ms} ms.`);
   return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-function resetBoard(){
-    current_board_state = [
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', 'w', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
-  ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-']
-];
-
-    generateBoard();
-    console.log("The board has been reset");
-}
-
 
 function drawMove(i, j) {
     if (current_board_state[i][j] == BLACK) {
