@@ -53,7 +53,7 @@ function generateBoard() {
 async function gamePlay() {
   console.log("The game has started");
 
-    while(totalMoves<100){
+    while(!GAME_END_SIGNAL){
       wait_for_opponent_move(() => {
 	  document.getElementById("faster").setAttribute("class","hide");
 	  document.getElementById("aiisdeciding").removeAttribute("class", "hide");
@@ -87,7 +87,7 @@ async function wait_for_opponent_move(callback, server_address, player) {
       console.log(`Player ${player} has replied!`);
       current_board_state = reply.state;
 	generateBoard();
-	handlePostMoveOf(player);
+	if(!GAME_END_SIGNAL) handlePostMoveOf(player);
       callback(); 
     })
     .catch((error) => {
