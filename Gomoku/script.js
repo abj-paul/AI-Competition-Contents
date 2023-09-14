@@ -10,7 +10,6 @@ const GOMOKU_PLAYER1_ADDRESS = "http://localhost:3000/ai/solve";
 const GOMOKU_PLAYER2_ADDRESS = "http://localhost:3000/ai/solve";
 
 
-let CURRENT_TURN = BLACK;
 const INITIAL_STATE = [
   ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
   ['-', '-', '-', '-', '-', '-', '-', '-', '-', '-'],
@@ -26,6 +25,8 @@ const INITIAL_STATE = [
 
 
 let current_board_state = INITIAL_STATE;
+
+let GAME_END_SIGNAL = false;
 
 function generateBoard() {
   // Removing Old Board
@@ -52,22 +53,21 @@ function generateBoard() {
 async function gamePlay() {
   console.log("The game has started");
 
-    while(true){
+    while(totalMoves<100){
       wait_for_opponent_move(() => {
 	  document.getElementById("faster").setAttribute("class","hide");
 	  document.getElementById("aiisdeciding").removeAttribute("class", "hide");
-      }, GOMOKU_PLAYER1_ADDRESS, BLACK);
-      
-      if(handlePostMoveOf(GOMOKU_PLAYER1_ADDRESS)) break;
-	await sleep(2000);
-      
-      wait_for_opponent_move(() => {
-	  document.getElementById("faster").removeAttribute("class","hide");
-	  document.getElementById("aiisdeciding").setAttribute("class", "hide");
+
+	  wait_for_opponent_move(() => {
+	      document.getElementById("faster").removeAttribute("class","hide");
+	      document.getElementById("aiisdeciding").setAttribute("class", "hide");
+	      
+	  }, GOMOKU_PLAYER2_ADDRESS, WHITE);
 	  
-      }, GOMOKU_PLAYER2_ADDRESS, WHITE);
-      
-      if(handlePostMoveOf(GOMOKU_PLAYER2_ADDRESS)) break;
+      }, GOMOKU_PLAYER1_ADDRESS, BLACK);
+
+	await sleep(10000);
+
   }
 }
 
@@ -86,7 +86,8 @@ async function wait_for_opponent_move(callback, server_address, player) {
     .then((reply) => {
       console.log(`Player ${player} has replied!`);
       current_board_state = reply.state;
-      generateBoard();
+	generateBoard();
+	if(GAME_END_SIGNAL==false) GAME_END_SIGNAL = handlePostMoveOf(player);
       callback(); 
     })
     .catch((error) => {
@@ -96,23 +97,17 @@ async function wait_for_opponent_move(callback, server_address, player) {
 
 function handlePostMoveOf(player){
     console.log(`Moves so far = ${totalMoves}`);
-  totalMoves+=1;
+    totalMoves+=1;
 
-  if (CURRENT_TURN == BLACK) {
-    CURRENT_TURN = WHITE;
-  } else {
-    CURRENT_TURN = BLACK;
-  }
-  if (checkWin() == true) {
-    showResultModal(`${player} won!`);
-    return true;
-  }
+    if (checkWin() == true) {
+	showResultModal(`${player} won!`);
+	return true;
+    }
     if(totalMoves==100){
 	console.log("Over 100 moves, ending..");
 	return true;
     }
-
-
+    
   return false;
 }
 
@@ -132,6 +127,7 @@ async function waitForPlayerMove(callback,playerAddress, playerColor) {
 }
 
 function sleep(ms) {
+    console.log(`Sleeping for ${ms} ms.`);
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
@@ -150,7 +146,6 @@ function resetBoard(){
 ];
 
     generateBoard();
-    CURRENT_TURN = BLACK;
     console.log("The board has been reset");
 }
 
