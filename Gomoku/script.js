@@ -48,24 +48,46 @@ function generateBoard() {
   }
 }
 
-function wait_for_opponent_move(callback, server_address) {
-  console.log("Waiting for AI Move");
+// Core Business Logic
+async function gamePlay() {
+  console.log("The game has started");
+
+    while(true){
+      wait_for_opponent_move(() => {
+	  document.getElementById("faster").setAttribute("class","hide");
+	  document.getElementById("aiisdeciding").removeAttribute("class", "hide");
+      }, GOMOKU_PLAYER1_ADDRESS, BLACK);
+      
+      if(handlePostMoveOf(GOMOKU_PLAYER1_ADDRESS)) break;
+	await sleep(2000);
+      
+      wait_for_opponent_move(() => {
+	  document.getElementById("faster").removeAttribute("class","hide");
+	  document.getElementById("aiisdeciding").setAttribute("class", "hide");
+	  
+      }, GOMOKU_PLAYER2_ADDRESS, WHITE);
+      
+      if(handlePostMoveOf(GOMOKU_PLAYER2_ADDRESS)) break;
+  }
+}
+
+async function wait_for_opponent_move(callback, server_address, player) {
   fetch(GOMOKU_PLAYER1_ADDRESS, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      state: current_board_state,
+	state: current_board_state,
+	player: player
     }),
   })
     .then((response) => response.json())
     .then((reply) => {
-      console.log("AI has replied!");
+      console.log(`Player ${player} has replied!`);
       current_board_state = reply.state;
-      console.log(reply.state);
       generateBoard();
-      callback(); // Call the callback function
+      callback(); 
     })
     .catch((error) => {
       console.error("An error occurred:", error);
@@ -73,6 +95,7 @@ function wait_for_opponent_move(callback, server_address) {
 }
 
 function handlePostMoveOf(player){
+    console.log(`Moves so far = ${totalMoves}`);
   totalMoves+=1;
 
   if (CURRENT_TURN == BLACK) {
@@ -84,39 +107,33 @@ function handlePostMoveOf(player){
     showResultModal(`${player} won!`);
     return true;
   }
+    if(totalMoves==100){
+	console.log("Over 100 moves, ending..");
+	return true;
+    }
 
-  if(totalMoves==100) return true;
 
   return false;
 }
 
 
-function gamePlay() {
-  console.log("The game has started");
 
-  while(1){
-	  console.log(`Current Move = ${totalMoves}`);
-    wait_for_opponent_move(() => {
-      document.getElementById("faster").setAttribute("class","hide");
-      document.getElementById("aiisdeciding").removeAttribute("class", "hide");
-    }, GOMOKU_PLAYER1_ADDRESS);
-
-    if(handlePostMoveOf(GOMOKU_PLAYER1_ADDRESS)) break;
-
-
-    wait_for_opponent_move(() => {
-      document.getElementById("faster").removeAttribute("class","hide");
-      document.getElementById("aiisdeciding").setAttribute("class", "hide");
-      
-    }, GOMOKU_PLAYER2_ADDRESS);
-
-    if(handlePostMoveOf(GOMOKU_PLAYER2_ADDRESS)) break;
-  }
-}
 
 
 
 // Miscellaneous Functions
+
+async function waitForPlayerMove(callback,playerAddress, playerColor) {
+  console.log(`Waiting for ${playerColor} player's move...`);
+  
+  return new Promise((resolve) => {
+    wait_for_opponent_move(callback, playerAddress, playerColor);
+  });
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 function resetBoard(){
     current_board_state = [
