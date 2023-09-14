@@ -34,3 +34,8 @@ Here, ~state~ is the state of the gomoku board after each ply/move. So your endp
 
 
 And thats it! You are ready to fight the legendary war of AIs.
+
+* Demo
+A demo video can be found here. [[file:resources/demo-match-between-gomoku-AIs.mkv][demo video]]
+
+If the above link does not work, try the demo video from drive link [[https://drive.google.com/file/d/18okZj72O2hJBeeqJpPLxEJpk5H2uJarX/view?usp=drive_link][here]].
